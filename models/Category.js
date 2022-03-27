@@ -15,19 +15,9 @@ Category.init(
   },
     category_name: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
+      allowNull: false
   },
-    category_image: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: 'https://via.placeholder.com/150',
-  },
-    category_description: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-  }
-  },
+},
   {
     sequelize,
     timestamps: false,

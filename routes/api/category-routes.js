@@ -10,16 +10,13 @@ router.get('/', (req, res) => {
     include: [
       {
         model: Product,
-        attributes: ['product_name'],
-      },
-    ],
-  })
-    .then((dbCategoryData) => {
-      // serialize the data
-      const categories = dbCategoryData.map((category) => category.get({ plain: true }));
-      // return the categories
-      res.json(categories);
-    })
+        attributes: ['attributes', 'product_name', 'price', 'stock']
+      }]
+  }).then(data => res.json(data))
+  .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+  });
 });
 
 router.get('/:id', (req, res) => {
@@ -32,64 +29,72 @@ router.get('/:id', (req, res) => {
     include: [
       {
         model: Product,
-        attributes: ['product_name'],
-      },
-    ],
+        attributes: ['id', 'product_name', 'price', 'stock']
+      }],
   })
-    .then((dbCategoryData) => {
-      // serialize the data
-      const category = dbCategoryData.get({ plain: true });
-      // return the category
-      res.json(category);
-    })
+  .then(data => {
+    if (!data) {
+      res.status(404).send();
+      return;
+    }
+    res.json(data);
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+  });
 });
 
 router.post('/', (req, res) => {
   // create a new category
-  Category.create({
-    category_name: req.body.category_name,
-  })
-    .then((dbCategoryData) => {
-      // serialize the data
-      const category = dbCategoryData.get({ plain: true });
-      // return the category
-      res.json(category);
-    })
+  Category.create(req.body)
+    .then(data => res.status(200).json(data))
+    .catch(err => {
+      console.log(500).json(err);
+    });
 });
 
 router.put('/:id', (req, res) => {
   // update a category by its `id` value
-  Category.update(
-    {
-      category_name: req.body.category_name,
-    },
-    {
-      where: {
-        id: req.params.id,
-      },
-    },
-  )
-    .then((dbCategoryData) => {
-      // serialize the data
-      const category = dbCategoryData.get({ plain: true });
-      // return the category
-      res.json(category);
-    })
+  Category.update(req.body, {
+    where: {
+      id: req.params.id
+    }
+  })
+  .then(data => {
+    if (!data) {
+      res.status(404).send();
+      return;
+    }
+    res.json(data);
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+  });
 });
 
 router.delete('/:id', (req, res) => {
   // delete a category by its `id` value
   Category.destroy({
     where: {
-      id: req.params.id,
-    },
+      id: req.params.id
+    }
+})
+  .then(data => {
+    console.log("File found");
+    console.log(data);
+    if (!data) {
+      res.status(404).send();
+      return;
+    }
+    res.status(200).json(data);
+    console.log("File retrieved");
   })
-    .then((dbCategoryData) => {
-      // serialize the data
-      const category = dbCategoryData.get({ plain: true });
-      // return the category
-      res.json(category);
-    }) 
+  .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+  });
 });
 
 module.exports = router;
