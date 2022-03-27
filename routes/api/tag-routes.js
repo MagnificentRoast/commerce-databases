@@ -6,6 +6,24 @@ const { Tag, Product, ProductTag } = require('../../models');
 router.get('/', (req, res) => {
   // find all tags
   // be sure to include its associated Product data
+  Tag.findAll({
+    include: [
+      {
+        model: Product,
+        attributes: ['product_name'],
+      },
+    ],
+  })
+    .then((dbTagData) => {
+      // serialize the data
+      const tags = dbTagData.map((tag) => tag.get({ plain: true }));
+      // return the tags
+      res.json(tags);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 router.get('/:id', (req, res) => {
